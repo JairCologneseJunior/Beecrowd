@@ -1,0 +1,134 @@
+import java.util.Scanner;
+
+class Node {
+    String value;
+    Node left, right;
+
+    public Node(String value) {
+        this.value = value;
+        left = right = null;
+    }
+}
+
+class BST {
+    private Node root;
+
+    public BST() {
+        root = null;
+    }
+
+    public void insert(String value) {
+        root = insertRecursive(root, value);
+    }
+
+    private Node insertRecursive(Node current, String value) {
+        if (current == null) {
+            return new Node(value);
+        }
+
+        if (value.compareTo(current.value) < 0) {
+            current.left = insertRecursive(current.left, value);
+        } else if (value.compareTo(current.value) > 0) {
+            current.right = insertRecursive(current.right, value);
+        }
+
+        return current;
+    }
+
+    public String inOrder() {
+        StringBuilder sb = new StringBuilder();
+        inOrderRecursive(root, sb);
+        return sb.toString().trim();
+    }
+
+    private void inOrderRecursive(Node node, StringBuilder sb) {
+        if (node != null) {
+            inOrderRecursive(node.left, sb);
+            sb.append(node.value).append(" ");
+            inOrderRecursive(node.right, sb);
+        }
+    }
+
+    public String preOrder() {
+        StringBuilder sb = new StringBuilder();
+        preOrderRecursive(root, sb);
+        return sb.toString().trim();
+    }
+
+    private void preOrderRecursive(Node node, StringBuilder sb) {
+        if (node != null) {
+            sb.append(node.value).append(" ");
+            preOrderRecursive(node.left, sb);
+            preOrderRecursive(node.right, sb);
+        }
+    }
+
+    public String postOrder() {
+        StringBuilder sb = new StringBuilder();
+        postOrderRecursive(root, sb);
+        return sb.toString().trim();
+    }
+
+    private void postOrderRecursive(Node node, StringBuilder sb) {
+        if (node != null) {
+            postOrderRecursive(node.left, sb);
+            postOrderRecursive(node.right, sb);
+            sb.append(node.value).append(" ");
+        }
+    }
+
+    public boolean search(String value) {
+        return searchRecursive(root, value);
+    }
+
+    private boolean searchRecursive(Node current, String value) {
+        if (current == null) {
+            return false;
+        }
+
+        if (value.equals(current.value)) {
+            return true;
+        }
+
+        return value.compareTo(current.value) < 0
+                ? searchRecursive(current.left, value)
+                : searchRecursive(current.right, value);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        BST bst = new BST();
+
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty()) continue;
+
+            String[] parts = line.split(" ");
+            String command = parts[0];
+
+            switch (command) {
+                case "I":
+                    bst.insert(parts[1]);
+                    break;
+                case "INFIXA":
+                    System.out.println(bst.inOrder());
+                    break;
+                case "PREFIXA":
+                    System.out.println(bst.preOrder());
+                    break;
+                case "POSFIXA":
+                    System.out.println(bst.postOrder());
+                    break;
+                case "P":
+                    String searchResult = bst.search(parts[1]) 
+                            ? parts[1] + " existe" 
+                            : parts[1] + " nao existe";
+                    System.out.println(searchResult);
+                    break;
+            }
+        }
+        scanner.close();
+    }
+}
